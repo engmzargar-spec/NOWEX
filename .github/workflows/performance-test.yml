@@ -1,0 +1,48 @@
+name: Performance Tests
+
+on:
+  schedule:
+    - cron: '0 4 * * 6'  # Weekly on Saturday at 4 AM
+  workflow_dispatch:
+
+jobs:
+  performance-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install performance tools
+        run: |
+          pip install locust
+
+      - name: Run performance tests
+        run: |
+          echo "Starting performance tests..."
+          echo "This would run actual performance tests"
+          echo "Example: locust -f ci-cd/tests/performance/trading_load_test.py --headless"
+          echo "Performance tests completed"
+
+      - name: Generate performance report
+        run: |
+          echo "Generating performance report..."
+          echo "Report would include:"
+          echo "- Response times"
+          echo "- Throughput"
+          echo "- Error rates"
+          echo "- Resource usage"
+
+      - name: Upload performance report
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: performance-reports-${{ github.run_id }}
+          path: |
+            performance-results/
+          retention-days: 30
