@@ -178,7 +178,7 @@ except Exception as e:
           fi
 
       - name: 📤 Upload Test Reports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-reports-${{ github.run_id }}
@@ -227,7 +227,7 @@ except Exception as e:
           echo "See integration-tests.yml for detailed integration tests"
       
       - name: Upload Integration Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: integration-reports-${{ github.run_id }}
