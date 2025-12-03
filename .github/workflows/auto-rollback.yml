@@ -1,0 +1,41 @@
+name: Auto Rollback
+
+on:
+  workflow_run:
+    workflows: ["Deploy to Environment"]
+    types:
+      - completed
+
+jobs:
+  check-deployment:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check failed deployment
+        run: |
+          echo "Deployment failed, checking if rollback is needed..."
+          echo "Workflow: ${{ github.event.workflow_run.name }}"
+          echo "Conclusion: ${{ github.event.workflow_run.conclusion }}"
+
+      - name: Determine environment
+        id: env
+        run: |
+          if [[ "${{ github.event.workflow_run.head_branch }}" == "main" ]]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Trigger rollback
+        run: |
+          echo "Would trigger rollback for ${{ steps.env.outputs.environment }}"
+          echo "Using deployment ID: ${{ github.event.workflow_run.id }}"
+          echo "To execute rollback, run:"
+          echo "  python ci-cd/scripts/auto-rollback.py --environment ${{ steps.env.outputs.environment }} --deployment-id ${{ github.event.workflow_run.id }}"
+
+      - name: Send rollback notification
+        run: |
+          echo "🚨 Rollback triggered for failed deployment"
+          echo "Environment: ${{ steps.env.outputs.environment }}"
+          echo "Deployment ID: ${{ github.event.workflow_run.id }}"

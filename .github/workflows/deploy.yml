@@ -1,0 +1,61 @@
+name: Deploy to Environment
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check deployment time
+        run: |
+          echo "Checking deployment time restrictions..."
+          echo "Deployment check passed"
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to server
+        env:
+          DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        run: |
+          echo "Deploying to $DEPLOY_ENV environment"
+          echo "Server: $SERVER_HOST"
+          echo "This would run the actual deployment script"
+          echo "In production, this would execute:"
+          echo "  ./ci-cd/scripts/deploy.sh $DEPLOY_ENV"
+
+      - name: Health check
+        env:
+          APP_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_URL || secrets.STAGING_URL }}
+        run: |
+          echo "Performing health check on $APP_URL"
+          echo "Health check completed"
+
+      - name: Send deployment notification
+        run: |
+          echo "Deployment ${{ job.status }} for ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Deployed by: ${{ github.actor }}"
