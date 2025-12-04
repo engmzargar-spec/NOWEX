@@ -63,3 +63,7 @@
 - `make dev` - راه‌اندازی تمام سرویس‌ها
 - `make test` - اجرای تست‌ها
 - `make migrate` - اجرای مایگریشن‌های پایگاه داده
+
+## 🧪 CI/CD Status
+
+![CI/CD Pipeline](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME/actions/workflows/ci-main.yml/badge.svg)
