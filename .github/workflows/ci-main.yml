@@ -5,10 +5,12 @@ on:
     branches: [main, develop, staging]
   pull_request:
     branches: [main]
+  schedule:
+    - cron: "0 2 * * *"
   workflow_dispatch:
 
 jobs:
-  setup-and-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
