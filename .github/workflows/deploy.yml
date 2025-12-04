@@ -1,16 +1,12 @@
 name: Deploy to Environment
 
 on:
-  push:
-    branches:
-      - main
-      - staging
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Environment to deploy to'
+        description: "Environment to deploy to"
         required: true
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
           - staging
@@ -19,43 +15,83 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-    
+
+    # محیط را بر اساس input انتخاب می‌کنیم
+    environment: ${{ inputs.environment }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Check deployment time
+      - name: Check deployment prerequisites
         run: |
-          echo "Checking deployment time restrictions..."
-          echo "Deployment check passed"
+          echo "=== Deployment Prerequisites Check ==="
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Commit: ${{ github.sha }}"
 
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # بررسی اولیه
+          if [ "${{ inputs.environment }}" == "production" ]; then
+            echo "⚠️ Production deployment requires manual approval"
+          else
+            echo "✅ Staging deployment can proceed"
+          fi
 
-      - name: Deploy to server
-        env:
-          DEPLOY_ENV: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
-          SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+      - name: Setup SSH (Placeholder)
         run: |
-          echo "Deploying to $DEPLOY_ENV environment"
-          echo "Server: $SERVER_HOST"
-          echo "This would run the actual deployment script"
-          echo "In production, this would execute:"
-          echo "  ./ci-cd/scripts/deploy.sh $DEPLOY_ENV"
+          echo "=== SSH Setup (Placeholder) ==="
+          echo "In real deployment, SSH key would be configured here"
+          echo "Secrets needed: SSH_PRIVATE_KEY, SERVER_HOST, DEPLOY_USER"
+          echo "✅ SSH setup placeholder completed"
 
-      - name: Health check
-        env:
-          APP_URL: ${{ github.ref == 'refs/heads/main' && secrets.PROD_URL || secrets.STAGING_URL }}
+      - name: Simulate Deployment
         run: |
-          echo "Performing health check on $APP_URL"
-          echo "Health check completed"
+          echo "=== Simulating Deployment ==="
+          echo "Environment: ${{ inputs.environment }}"
+          echo "Target: ${{ inputs.environment }} server"
 
-      - name: Send deployment notification
+          if [ -f "ci-cd/scripts/deploy.sh" ]; then
+            echo "Deployment script found"
+            # در محیط واقعی: ./ci-cd/scripts/deploy.sh ${{ inputs.environment }}
+          else
+            echo "⚠️ Deployment script not found"
+            echo "Creating basic deploy log..."
+            echo "Deployment simulation successful" > deploy.log
+          fi
+
+          echo "✅ Deployment simulation completed"
+
+      - name: Health Check (Placeholder)
         run: |
-          echo "Deployment ${{ job.status }} for ${{ github.ref_name }}"
+          echo "=== Health Check (Placeholder) ==="
+          echo "In real deployment, health check would run against:"
+          echo "- Production: ${{ secrets.PROD_URL || 'PROD_URL not set' }}"
+          echo "- Staging: ${{ secrets.STAGING_URL || 'STAGING_URL not set' }}"
+          echo "✅ Health check placeholder completed"
+
+      - name: Send Notification (Placeholder)
+        run: |
+          echo "=== Deployment Notification ==="
+          echo "Status: ${{ job.status }}"
+          echo "Environment: ${{ inputs.environment }}"
           echo "Commit: ${{ github.sha }}"
           echo "Deployed by: ${{ github.actor }}"
+          echo "Time: $(date)"
+
+          # در محیط واقعی از Slack/Email استفاده می‌شود
+          if [ -f "ci-cd/scripts/send-deployment-notification.py" ]; then
+            echo "Notification script available"
+          else
+            echo "⚠️ Notification script not found"
+          fi
+
+          echo "✅ Notification placeholder completed"
+
+      - name: Upload Deployment Log
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: deployment-logs-${{ inputs.environment }}-${{ github.run_id }}
+          path: |
+            deploy.log
+          retention-days: 30
