@@ -1,0 +1,25 @@
+{
+  "name": "@nowex/api",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint . --ext ts --report-unused-disable-directives --max-warnings 0",
+    "clean": "rm -rf .turbo dist node_modules"
+  },
+  "dependencies": {
+    "@nowex/types": "*"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "axios": "^1.6.0"
+  },
+  "peerDependencies": {
+    "axios": "^1.6.0"
+  }
+}

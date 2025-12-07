@@ -1,0 +1,26 @@
+{
+  "name": "nowex-platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "dev:admin": "turbo dev --filter=admin-frontend",
+    "dev:user": "turbo dev --filter=user-frontend",
+    "dev:all": "turbo dev --parallel",
+    "lint": "turbo lint",
+    "test": "turbo test",
+    "clean": "turbo clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.6.3",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "npm@10.9.3",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

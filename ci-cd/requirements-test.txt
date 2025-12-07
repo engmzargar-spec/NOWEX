@@ -1,0 +1,35 @@
+# ابزارهای تست و کیفیت کد
+pytest==7.4.0
+pytest-cov==4.1.0
+pytest-asyncio==0.21.0
+pytest-html==4.0.0
+pytest-xdist==3.5.0
+
+# امنیت
+bandit==1.7.5
+safety==2.3.5
+
+# کیفیت کد و فرمت‌دهی
+flake8==6.1.0
+black==23.9.1
+isort==5.12.0
+mypy==1.5.1
+radon==6.0.1
+
+# تست API و performance
+locust==2.20.2
+k6==0.0.0  # نیاز به نصب جداگانه دارد
+requests==2.31.0
+
+# دیتابیس و Redis برای تست‌های یکپارچگی
+psycopg2-binary==2.9.9
+redis==7.0.1
+
+# گزارش‌گیری و مصورسازی
+pytest-html==4.0.0
+allure-pytest==2.13.2
+
+# ابزارهای کمکی
+coverage==7.3.0
+freezegun==1.2.2
+Faker==23.2.1
