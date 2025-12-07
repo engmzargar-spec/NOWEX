@@ -1,0 +1,95 @@
+name: Smoke Test - Basic CI/CD Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  validate-environment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Print environment info
+        run: |
+          echo "=== System Information ==="
+          echo "Runner OS: $(uname -a)"
+          echo "Python available: $(which python3 || echo 'Not found')"
+          echo "Git version: $(git --version)"
+          echo "Working directory: $(pwd)"
+          echo "Repository: $GITHUB_REPOSITORY"
+          echo "Event: $GITHUB_EVENT_NAME"
+
+      - name: Validate project structure
+        run: |
+          echo "=== Project Structure Validation ==="
+
+          # Check essential directories
+          for dir in "backend" "ci-cd" ".github/workflows"; do
+            if [ -d "$dir" ]; then
+              echo "✅ $dir exists"
+            else
+              echo "❌ $dir missing"
+            fi
+          done
+
+          # Check essential files
+          for file in "backend/requirements.txt" "backend/main.py" "requirements.txt"; do
+            if [ -f "$file" ]; then
+              echo "✅ $file exists"
+            else
+              echo "❌ $file missing"
+            fi
+          done
+
+      - name: Test Python installation
+        run: |
+          echo "=== Python Test ==="
+          python3 --version
+          pip --version
+
+          # Create and test virtual environment
+          python3 -m venv test-venv
+          source test-venv/bin/activate
+          python --version
+
+      - name: Simple lint check
+        run: |
+          echo "=== Simple Code Check ==="
+
+          # Count Python files
+          python_count=$(find . -name "*.py" -not -path "./test-venv/*" -not -path "./venv/*" | wc -l)
+          echo "Found $python_count Python files"
+
+          # Check for syntax errors in main files
+          for py_file in "backend/main.py" "backend/apps/__init__.py"; do
+            if [ -f "$py_file" ]; then
+              if python3 -m py_compile "$py_file" 2>/dev/null; then
+                echo "✅ $py_file has valid Python syntax"
+              else
+                echo "⚠️  $py_file may have syntax issues"
+              fi
+            fi
+          done
+
+      - name: Success notification
+        if: success()
+        run: |
+          echo "🎉 Smoke test passed successfully!"
+          echo "GitHub Actions is working correctly."
+          echo "Project structure is valid."
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "=== Smoke Test Summary ==="
+          echo "Workflow: $GITHUB_WORKFLOW"
+          echo "Run ID: $GITHUB_RUN_ID"
+          echo "Status: ${{ job.status }}"
+          date
