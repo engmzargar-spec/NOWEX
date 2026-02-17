@@ -1,4 +1,7 @@
-# server.ps1 - NOWEX Server Runner (Monorepo Version)
+# ============================================
+# NOWEX Platform Startup Script (Final Version)
+# ============================================
+
 Write-Host "=== NOWEX Platform Startup ===" -ForegroundColor Green
 Write-Host "==============================" -ForegroundColor Yellow
 
@@ -11,85 +14,80 @@ Write-Host "4. Exit" -ForegroundColor White
 
 $choice = Read-Host "Enter choice (1-4)"
 
+# --------------------------------------------
+# 🔥 Correct Absolute Paths
+# --------------------------------------------
+$BackendPath = "D:\NOWEX-Platform\backend"
+$FrontendPath = "D:\NOWEX-Platform\frontend\admin-frontend"
+
+# --------------------------------------------
+# 1) Backend Only
+# --------------------------------------------
 if ($choice -eq "1") {
-    # Start Backend
+
     Write-Host ""
     Write-Host "Starting Backend..." -ForegroundColor Magenta
     Write-Host "Backend URL: http://localhost:8000" -ForegroundColor White
-    Write-Host "API Docs: http://localhost:8000/docs" -ForegroundColor White
     Write-Host ""
-    
-    Set-Location backend
+
+    Set-Location $BackendPath
     uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 }
+
+# --------------------------------------------
+# 2) Admin Frontend Only
+# --------------------------------------------
 elseif ($choice -eq "2") {
-    # Start Admin Frontend
+
     Write-Host ""
     Write-Host "Starting Admin Frontend..." -ForegroundColor Magenta
     Write-Host "Admin Panel: http://localhost:3000" -ForegroundColor White
-    Write-Host "Login: admin@nowex.com / password123" -ForegroundColor White
     Write-Host ""
-    
-    Set-Location "apps\admin-frontend"
+
+    Set-Location $FrontendPath
     npm run dev
 }
+
+# --------------------------------------------
+# 3) Start Both
+# --------------------------------------------
 elseif ($choice -eq "3") {
-    # Start Both Services
+
     Write-Host ""
     Write-Host "Starting Both Services..." -ForegroundColor Cyan
-    
-    # Start Backend in new PowerShell window
-    Write-Host "Launching Backend..." -ForegroundColor Yellow
+
+    # Backend window
     $backendScript = @"
-cd '$PWD\backend'
-Write-Host '=== NOWEX Backend ===' -ForegroundColor Green
-Write-Host 'Server: http://localhost:8000' -ForegroundColor White
-Write-Host 'API Docs: http://localhost:8000/docs' -ForegroundColor White
-Write-Host 'Press Ctrl+C to stop' -ForegroundColor Yellow
-Write-Host ''
+cd '$BackendPath'
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 "@
-    
-    Start-Process PowerShell -ArgumentList "-NoExit -Command `"$backendScript`"" -WindowStyle Normal
-    
-    # Wait for backend to start
-    Write-Host "Waiting for Backend to initialize (3 seconds)..." -ForegroundColor Gray
+
+    Start-Process PowerShell -ArgumentList "-NoExit -Command `"$backendScript`""
+
     Start-Sleep 3
-    
-    # Start Admin Frontend in new PowerShell window
-    Write-Host "Launching Admin Frontend..." -ForegroundColor Yellow
+
+    # Frontend window
     $frontendScript = @"
-cd '$PWD\apps\admin-frontend'
-Write-Host '=== NOWEX Admin Frontend ===' -ForegroundColor Green
-Write-Host 'URL: http://localhost:3000' -ForegroundColor White
-Write-Host 'Login: admin@nowex.com / password123' -ForegroundColor White
-Write-Host 'Press Ctrl+C to stop' -ForegroundColor Yellow
-Write-Host ''
+cd '$FrontendPath'
 npm run dev
 "@
-    
-    Start-Process PowerShell -ArgumentList "-NoExit -Command `"$frontendScript`"" -WindowStyle Normal
-    
+
+    Start-Process PowerShell -ArgumentList "-NoExit -Command `"$frontendScript`""
+
     Write-Host ""
-    Write-Host "✅ Services starting in separate windows..." -ForegroundColor Green
-    Write-Host ""
-    Write-Host "=== Access URLs ===" -ForegroundColor Cyan
-    Write-Host "Backend API:    http://localhost:8000" -ForegroundColor White
-    Write-Host "Admin Panel:    http://localhost:3000" -ForegroundColor White
-    Write-Host ""
-    Write-Host "=== Login Credentials ===" -ForegroundColor Cyan
-    Write-Host "Email: admin@nowex.com" -ForegroundColor White
-    Write-Host "Password: password123" -ForegroundColor White
-    Write-Host ""
-    Write-Host "Press Enter to return to main menu..."
-    Read-Host
+    Write-Host "✅ Services starting..." -ForegroundColor Green
 }
+
+# --------------------------------------------
+# 4) Exit
+# --------------------------------------------
 elseif ($choice -eq "4") {
-    Write-Host ""
     Write-Host "Goodbye!" -ForegroundColor Cyan
 }
+
+# --------------------------------------------
+# Invalid Input
+# --------------------------------------------
 else {
-    Write-Host ""
     Write-Host "Invalid choice!" -ForegroundColor Red
-    Write-Host "Please enter 1, 2, 3, or 4" -ForegroundColor Yellow
 }
