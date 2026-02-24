@@ -1,37 +1,30 @@
-<<<<<<< HEAD
-﻿# See complete .gitignore at: https://github.com/github/gitignore/blob/main/Node.gitignore
-
-# Dependencies
+# ============================================
+# Node / Frontend
+# ============================================
 node_modules/
 .npm
 .pnpm
 .yarn/
-
-# Build outputs
 dist/
 build/
 .next/
 out/
 .nuxt/
-
-# Runtime data
 *.log
 logs/
 
-# Environment variables
+# Environment
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
+!.env.example
 
-# IDE files
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
 
@@ -39,29 +32,44 @@ Thumbs.db
 coverage/
 .nyc_output/
 
-# Monorepo packages
-**/.turbo/
-**/.next/
-**/node_modules/
+# ============================================
+# Python / Backend
+# ============================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# Backup files
-*.backup
-*-backup.*
+venv/
+env/
+.venv/
 
-# Temporary files
-tmp/
+# Python build
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# pytest / mypy
+.pytest_cache/
+.mypy_cache/
+.tox/
+.nox/
+
+# ============================================
+# NOWEX Specific
+# ============================================
+data/
+storage/
+uploads/
+media/
 temp/
-*.tmp
-*.temp
-=======
-# محتوای فعلی را حفظ کرده و این موارد را اضافه کنید
-cat >> .gitignore << 'EOF'
+tmp/
+cache/
+.cache/
 
-# ============================================
-# NOWEX SPECIFIC ADDITIONS - MUST ADD
-# ============================================
-
-# 🔒 SECURITY - CRITICAL FOR TRADING PLATFORM
+# Secrets
 *.key
 *.crt
 *.pfx
@@ -72,11 +80,8 @@ passwords.txt
 token.json
 firebase-key.json
 service-account.json
-# حذف تمام فایل‌های .env به جز نمونه
-.env.*
-!.env.example
 
-# 🗄️ Databases & Backups
+# Databases
 *.db
 *.sqlite
 *.sql
@@ -85,109 +90,17 @@ database/backups/
 *.dump
 *.backup
 
-# 📊 Application Data & Storage
-data/
-storage/
-uploads/
-media/
-temp/
-tmp/
-cache/
-.cache/
-
-# 🐍 Python Specific (Complete)
-*.pyo
-*.pyd
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# 🧪 Testing & Coverage
-.coverage
-.coverage.*
-htmlcov/
-.pytest_cache/
-.mypy_cache/
-.tox/
-.nox/
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-test-results/
-reports/
-
-# 📈 Monitoring & Metrics
-prometheus_data/
-grafana_data/
-*.prom
-
-# 🔌 Redis & Cache
-dump.rdb
-redis-data/
-
-# 🐳 Docker (اگر بعداً اضافه شود)
+# Docker
 docker-compose.override.yml
 .dockerignore
 
-# 📁 Project Structure Specific
-# Backend cache at all levels
-backend/*/__pycache__/
-backend/*/*/__pycache__/
-backend/*/*/*/__pycache__/
-
-# Frontend specific (if exists)
-.next/
-.nuxt/
-.cache-loader/
-.nuxt/
-public/static/*.map
-
-# 📄 Documentation generated
-docs/_build/
-site/
-
-# 🔑 API Keys & Configs
-config/local*
-config/dev*
-config/prod*
-config/staging*
-
-# 📊 Reports & Exports
+# Reports
 *.csv
 *.xlsx
 *.pdf
 exports/
 
-# 🎮 Game files (اگر demo mode دارید)
-demo-data/
-simulation-data/
-
-# 🏦 Financial Data (حیاتی!)
-transactions-export/
-financial-reports/
-user-portfolios/
-*.portfolio
-
-# ============================================
-# EXCEPTIONS - KEEP THESE IN REPO
-# ============================================
+# Keep these
 !.gitkeep
 !README.md
 !LICENSE
@@ -199,5 +112,3 @@ user-portfolios/
 !Dockerfile
 !.github/
 !openapi.json
-EOF
->>>>>>> 4e0c852b8245ab7629d91fb3d941361f3f8fb2fb
